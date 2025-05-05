@@ -5,7 +5,7 @@ import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 
-export default async function ThreadsPage({ searchParams }: { searchParams: { search?: string | string[] } }) {
+export default async function ThreadsPage({ searchParams }) {
   // Protect page: redirect if not authenticated
   const session = await getServerSession(authOptions);
   if (!session) redirect('/signin');
