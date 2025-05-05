@@ -6,8 +6,8 @@ import { prisma } from '@/lib/prisma';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
-export default async function ThreadPage({ params }) {
-  const { id } = params;
+export default async function ThreadPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   const thread = await prisma.thread.findUnique({
     where: { id },
     include: {
@@ -43,18 +43,20 @@ export default async function ThreadPage({ params }) {
   const { sentiment } = await sentimentRes.json();
 
   return (
-    <main className="max-w-3xl mx-auto p-6 space-y-6">
-      <div className="border-b pb-4">
-        <h1 className="text-2xl font-bold">{thread.title}</h1>
-        <p className="text-sm text-gray-600">
+    <main className="max-w-3xl mx-auto p-6 space-y-6 bg-white dark:bg-gray-800 dark:text-gray-100">
+      <div className="border-b border-gray-200 dark:border-gray-700 pb-4">
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">{thread.title}</h1>
+        <p className="text-sm text-gray-600 dark:text-gray-400">
           by {thread.author.name} • {thread._count.comments} comments • {thread._count.votes} votes
         </p>
-        <div className="mt-4">
-          <ReactMarkdown remarkPlugins={[remarkGfm]}>
-            {thread.content}
-          </ReactMarkdown>
+        <div className="mt-4 text-gray-900 dark:text-gray-100">
+          <div className="prose dark:prose-invert">
+            <ReactMarkdown remarkPlugins={[remarkGfm]}>
+              {thread.content}
+            </ReactMarkdown>
+          </div>
           <ThreadActions threadId={id} title={thread.title} content={thread.content} authorId={thread.author.id} users={users} />
-          <p className="mt-2 text-sm font-medium">Sentiment: {sentiment}</p>
+          <p className="mt-2 text-sm font-medium dark:text-gray-300">Sentiment: {sentiment}</p>
         </div>
       </div>
 
